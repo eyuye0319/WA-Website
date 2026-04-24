@@ -1,175 +1,83 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './Auth.css';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub, FaRegEnvelope, FaLock, FaUser } from 'react-icons/fa';
 
-function Auth({ onSuccess }) {
+const Auth = ({ onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState({});
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
-  const validateForm = () => {
-    const nextErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!isLogin && !formData.fullName.trim()) {
-      nextErrors.fullName = 'Full name is required.';
-    }
-    if (!formData.email.trim()) {
-      nextErrors.email = 'Email address is required.';
-    } else if (!emailRegex.test(formData.email)) {
-      nextErrors.email = 'Enter a valid email address.';
-    }
-    if (!formData.password) {
-      nextErrors.password = 'Password is required.';
-    } else if (formData.password.length < 8) {
-      nextErrors.password = 'Password must be at least 8 characters.';
-    }
-
-    return nextErrors;
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const validationErrors = validateForm();
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) return;
-    // Placeholder for API integration.
-    console.log('Auth form submitted:', { isLogin, ...formData });
-    if (onSuccess) onSuccess();
-  };
-
-  const toggleMode = () => {
-    setIsLogin((prev) => !prev);
-    setShowPassword(false);
-    setErrors({});
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSuccess();
   };
 
   return (
-    <div className="auth-container">
-      {/* Left Side */}
-      <div className="brand-side">
-        <div className="brand-badge" aria-hidden="true">
-          WA
+    <div className="modern-auth-viewport">
+      {/* LEFT: MINIMAL BRANDING */}
+      <div className="branding-pane">
+        <div className="branding-container">
+          <div className="mini-brand-logo">
+            <span className="wa-square">WA</span>
+            <span className="wa-text">SOFTWARE COMPANY</span>
+          </div>
+          <h1 className="hero-heading">Engineering the Future.</h1>
+          <p className="hero-subtext">
+            Building high-performance digital ecosystems for the modern web.
+          </p>
+          <div className="pill-container">
+            <span>Innovation</span> • <span>Precision</span> • <span>Power</span>
+          </div>
         </div>
-        <p className="brand-kicker">Trusted digital partner</p>
-        <h1>WA Software Company</h1>
-        <p>Innovating the future of web development and software solutions.</p>
       </div>
 
-      {/* Right Side */}
-      <div className="form-side">
-        <div className="auth-card">
-          <h2>{isLogin ? 'Welcome back' : 'Create an account'}</h2>
-          <p className="toggle-text">
-            {isLogin ? 'New to WA Software?' : 'Already have an account?'}{' '}
-            <button type="button" className="toggle-link" onClick={toggleMode}>
-              {isLogin ? ' Sign up for free' : ' Log in'}
-            </button>
-          </p>
+      {/* RIGHT: THE "SMALL" MODERN CARD */}
+      <div className="form-pane">
+        <div className="auth-card-slim">
+          <div className="card-intro-text">
+            <h2>{isLogin ? 'Welcome Back' : 'Join WA'}</h2>
+            <p>{isLogin ? 'Sign in to your portal' : 'Start your journey'}</p>
+          </div>
 
-          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit}>
             {!isLogin && (
-              <div className="field-group">
-                <label className="auth-label" htmlFor="fullName">
-                  Full name
-                </label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  placeholder="Enter your full name"
-                  className={`auth-input ${errors.fullName ? 'input-error' : ''}`}
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  aria-invalid={Boolean(errors.fullName)}
-                  aria-describedby={errors.fullName ? 'fullName-error' : undefined}
-                />
-                {errors.fullName && (
-                  <p id="fullName-error" className="input-hint error-text">
-                    {errors.fullName}
-                  </p>
-                )}
+              <div className="slim-input-wrapper">
+                <FaUser className="slim-icon" />
+                <input type="text" placeholder="Full Name" required />
               </div>
             )}
 
-            <div className="field-group">
-              <label className="auth-label" htmlFor="email">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="name@company.com"
-                className={`auth-input ${errors.email ? 'input-error' : ''}`}
-                value={formData.email}
-                onChange={handleInputChange}
-                aria-invalid={Boolean(errors.email)}
-                aria-describedby={errors.email ? 'email-error' : undefined}
-                autoComplete="email"
-              />
-              {errors.email && (
-                <p id="email-error" className="input-hint error-text">
-                  {errors.email}
-                </p>
-              )}
+            <div className="slim-input-wrapper">
+              <FaRegEnvelope className="slim-icon" />
+              <input type="email" placeholder="Email Address" required />
             </div>
 
-            <div className="field-group">
-              <label className="auth-label" htmlFor="password">
-                Password
-              </label>
-              <div className="password-group">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="At least 8 characters"
-                  className={`auth-input ${errors.password ? 'input-error' : ''}`}
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  aria-invalid={Boolean(errors.password)}
-                  aria-describedby="password-hint password-error"
-                  autoComplete={isLogin ? 'current-password' : 'new-password'}
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              <p id="password-hint" className="input-hint">
-                Use 8+ characters with a mix of letters and numbers.
-              </p>
-              {errors.password && (
-                <p id="password-error" className="input-hint error-text">
-                  {errors.password}
-                </p>
-              )}
+            <div className="slim-input-wrapper">
+              <FaLock className="slim-icon" />
+              <input type="password" placeholder="Password" required />
             </div>
 
-            <button type="submit" className="auth-button">
-              {isLogin ? 'Sign In' : 'Create Account'}
+            <button type="submit" className="slim-btn-primary">
+              {isLogin ? 'Sign In' : 'Sign Up'}
             </button>
+
+            <div className="slim-divider">OR</div>
+
+            <div className="slim-social-group">
+              <button type="button" className="slim-social-btn"><FcGoogle /></button>
+              <button type="button" className="slim-social-btn"><FaGithub /></button>
+            </div>
+
+            <p className="slim-footer-link">
+              {isLogin ? "New here?" : "Member?"} 
+              <span onClick={() => setIsLogin(!isLogin)}>
+                {isLogin ? ' Create Account' : ' Login'}
+              </span>
+            </p>
           </form>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Auth;
